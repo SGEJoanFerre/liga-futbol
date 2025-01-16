@@ -1,0 +1,114 @@
+<odoo>
+    <record id="liga_partido_action" model="ir.actions.act_window">
+        <field name="name">Partidos de la liga</field>
+        <field name="res_model">liga.partido</field>
+        <field name="view_mode">tree,form,graph</field>
+    </record>
+    
+    <record id="liga_partido_action_report" model="ir.actions.report">
+        <field name="name">Informe de partido</field>
+        <field name="model">liga.partido</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ligaFutbol.report_partido</field>
+        <field name="report_file">ligaFutbol.report_partido</field>
+        <field name="binding_model_id" ref="model_liga_partido"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_partido">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Informe del Partido</h2>
+                        <p>
+                            <strong>Equipo de Casa:</strong> <span t-field="doc.equipo_casa"/>
+                        </p>
+                        <p>
+                            <strong>Goles Equipo de Casa:</strong> <span t-field="doc.goles_casa"/>
+                        </p>
+                        <p>
+                            <strong>Equipo Visitante:</strong> <span t-field="doc.equipo_fuera"/>
+                        </p>
+                        <p>
+                            <strong>Goles Equipo Visitante:</strong> <span t-field="doc.goles_fuera"/>
+                        </p>
+                        <p>
+                            <strong>Resultado:</strong>
+                            <t t-if="doc.goles_casa > doc.goles_fuera">
+                                Ganador: <span t-field="doc.equipo_casa"/>
+                            </t>
+                            <t t-elif="doc.goles_fuera > doc.goles_casa">
+                                Ganador: <span t-field="doc.equipo_fuera"/>
+                            </t>
+                            <t t-else="">
+                                Empate
+                            </t>
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <menuitem id="liga_partido_menu" name="Partidos" parent="liga_base_menu" action="liga_partido_action" />
+
+    <!-- Vista formulario -->
+    <record id="liga_partido_view_form" model="ir.ui.view">
+        <field name="name">liga.partido.form</field>
+        <field name="model">liga.partido</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="sumar_goles_casa" type="object" string="Sumar 2 goles (Local)" class="btn-primary" />
+                    <button name="sumar_goles_fuera" type="object" string="Sumar 2 goles (Visitante)" class="btn-secondary" />
+                </header>
+                <group>
+                    <group>
+                        <field name="equipo_casa" />
+                        <field name="goles_casa" />
+                    </group>
+                    <group>
+                        <field name="equipo_fuera" />
+                        <field name="goles_fuera" />
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista lista -->
+    <record id="liga_partido_view_tree" model="ir.ui.view">
+        <field name="name">liga.partido.tree</field>
+        <field name="model">liga.partido</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="equipo_casa" />
+                <field name="goles_casa" />
+                <field name="equipo_fuera" />
+                <field name="goles_fuera" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista gráfica -->
+    <record id="liga_partido_view_graph" model="ir.ui.view">
+        <field name="name">liga.partido.graph</field>
+        <field name="model">liga.partido</field>
+        <field name="arch" type="xml">
+            <graph string="Estadísticas de goles" type="bar">
+                <field name="equipo_casa" />
+                <field name="goles_casa" />
+            </graph>
+        </field>
+    </record>
+
+    <!-- Wizard -->
+    <record id="action_crear_partido_wizard" model="ir.actions.act_window">
+        <field name="name">Crear Partido</field>
+        <field name="res_model">crear.partido.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+
